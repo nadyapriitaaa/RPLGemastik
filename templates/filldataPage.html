@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Table Example</title>
+    <style>
+        /* Optional CSS styles for table formatting */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Sample HTML Table</h2>
+
+<table>
+    <thead>
+        <tr>
+            {% for head in header %}
+                <th>{{head}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in dataset.values %}
+        <tr>
+            {% for i in data %}
+            <td>{{i}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

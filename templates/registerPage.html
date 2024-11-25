@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static',filename='styles/login.css') }}"
+        />
+        <title>Pritsent</title>
+    </head>
+    <body>
+        <!-- uname , pw -->
+        <section class="left-side">
+            <p>Custom Your Database</p>
+        </section>
+        <section class="right-side">
+            <p>Sign Up</p>
+            <p>to <span>VeriFace</span></p>
+            <form action="/register" method="post">
+                <div class="input-field">
+                    <input type="text" name="uname" id="uname" autocomplete="off" required />
+                    <label for="uname">username</label>
+                </div>
+                <div class="input-field">
+                    <input type="password" name="pw" id="pw" required />
+                    <label for="pw">password</label>
+                </div>
+                <p class="tanya">sudah punya akun? <a href="/login">Log in</a></p>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %} {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %} {% endif %} {% endwith %}
+                <button type="submit">Sign up</button>
+            </form>
+        </section>
+    </body>
+</html>

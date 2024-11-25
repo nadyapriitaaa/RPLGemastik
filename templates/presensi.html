@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script
+            src="https://kit.fontawesome.com/8adfb2aa9f.js"
+            crossorigin="anonymous"
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static',filename='styles/presensi.css') }}"
+        />
+        <title>Pritsent</title>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+            integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <nav><h1>VeriFace</h1></nav>
+        <main id="main">
+            <section class="left-side">
+                <video id="player" autoplay style="display: none;"></video>
+                {% if mode == "tambah" %}
+                <img id="camera" src="/video_feed/tambah" alt=""/>
+                {% elif mode == "cek" %}
+                <img id="camera" src="/video_feed/cek" alt=""/>
+                {% endif %}
+                <div class="keterangan">
+                    <a href="/event/{{event_id}}/presensi"
+                        ><button class="keluarBTN">Selesai</button></a
+                    >
+                </div>
+            </section>
+            <section class="right-side">
+                {% if mode == "tambah" %}
+                <p id="sudah"></p>
+                <button
+                    id="selesaiBTN"
+                    style="display: none"
+                    onclick="window.location.href = '/event/{{event_id}}/presensi'"
+                >
+                    Selesai
+                </button>
+                {% elif mode == "cek" %}
+                <h3>Daftar hadir</h3>
+                <ul class="attendance-list"></ul>
+                {% endif %}
+            </section>
+        </main>
+
+        <script>
+            const socket = io();
+            document.addEventListener("DOMContentLoaded", function () {
+                var videoContainer = document.getElementById("main");
+                var video = document.getElementById("camera");
+                let attendanceList = document.querySelector(".attendance-list");
+                const selesaiBTN = document.getElementById("selesaiBTN");
+                let sisiKanan = document.querySelector(".right-side");
+                socket.on("connect", () => {
+                    console.log("terhubung");
+                });
+
+                socket.on("update_attendance", (list_hadir) => {
+                    attendanceList.innerHTML = ""; // Clear the existing list
+                    list_hadir.forEach((id) => {
+                        let listItem = document.createElement("li");
+                        listItem.textContent = id;
+                        attendanceList.appendChild(listItem);
+                    });
+                });
+                socket.on("selesai", function () {
+                    selesaiBTN.style.display = "block";
+                    document.getElementById("sudah").innerHTML = "Sudah"
+                });
+            });
+            (function () {
+                var mediaOptions = { audio: false, video: true };
+                var socket = io();
+
+                if (!navigator.mediaDevices.getUserMedia) {
+                    alert("getUserMedia not supported in this browser.");
+                    return;
+                }
+
+                navigator.mediaDevices
+                    .getUserMedia(mediaOptions)
+                    .then(success)
+                    .catch(function (err) {
+                        console.error("Error accessing webcam:", err);
+                    });
+
+                function success(stream) {
+                    var video = document.querySelector("#player");
+                    video.srcObject = stream;
+                    sendToServer(stream);
+                }
+
+                function sendToServer(stream) {
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+                    const video = document.querySelector("#player");
+
+                    video.addEventListener("play", function () {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+
+                        setInterval(function () {
+                            context.drawImage(
+                                video,
+                                0,
+                                0,
+                                canvas.width,
+                                canvas.height
+                            );
+                            const frame = canvas.toDataURL("image/jpeg");
+                            socket.emit("frame", frame);
+                        }, 100); // Sending frames at an interval
+                    });
+                }
+            })();
+            function mintaRefreshSekali() {
+                // Menampilkan pesan kepada pengguna
+                var confirmation = confirm(
+                    "Anda akan diminta untuk me-refresh sekali. Lanjutkan?"
+                );
+
+                // Jika pengguna menyetujui
+                if (confirmation === true) {
+                    // Menambahkan flag ke localStorage
+                    localStorage.setItem("refreshedOnce", "true");
+
+                    // Me-refresh halaman
+                    location.reload();
+                }
+            }
+
+            // Cek apakah pengguna sudah me-refresh sekali sebelumnya
+            if (!localStorage.getItem("refreshedOnce")) {
+                // Memanggil fungsi mintaRefreshSekali() jika belum pernah me-refresh sebelumnya
+                mintaRefreshSekali();
+            }
+        </script>
+    </body>
+</html>

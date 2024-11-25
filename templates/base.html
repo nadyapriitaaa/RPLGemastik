@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static',filename='styles/main.css') }}"
+        />
+        <script
+            src="https://kit.fontawesome.com/8adfb2aa9f.js"
+            crossorigin="anonymous"
+        ></script>
+        {% block head %} {% endblock %}
+        <title>Napritsent</title>
+    </head>
+    <body>
+        <div id="back"></div>
+        
+        {% block popUp %} {% endblock %}
+        <nav>
+            <div class="left">
+                <a onclick="sidePanel()"><i class="fa-solid fa-bars bar"></i></a>
+                <a href="/mainpage"
+                    ><img
+                        src="{{ url_for('static', filename='img/logo.svg') }}"
+                        alt="logo"
+                    />
+                </a>
+            </div>
+            <div class="right">
+                <a onclick="addEvent()"><i class="fa-solid fa-plus"></i></a>
+                <div class="profile" onclick="popUpAkun()">{{akun[0]}}</div>
+            </div>
+            <div class="popupakun" id="popupakun" style="display: none;">
+                <p>{{akun}}</p>
+                <a href="/log-out">Log Out</a>
+            </div>
+        </nav>
+        <main>
+            <aside id="sidePanel">
+                <div
+                    class="home sideIcon"
+                    onclick="window.location.href = '/mainpage'"
+                >
+                    <i class="fa-solid fa-house"></i>
+                    <p for="home" class="label homeLabel">Home</p>
+                </div>
+                {% if event %} {% for i in event %}
+                <div
+                    class="event sideIcon"
+                    onclick="goToEvent(this)"
+                    data-event-id="{{ i[0] }}"
+                >
+                    <div
+                        class="eventIcon"
+                        style="background-color: {{ i[7] }};"
+                    >
+                        {{ i[1][0] }}
+                    </div>
+                    <div class="label">
+                        <p id="label">{{ i[1] }}</p>
+                        <p id="waktu">{{ i[3] }}</p>
+                    </div>
+                </div>
+                {% endfor %} {% else %}
+                <p id="label">Belum ada event</p>
+                {% endif %}
+            </aside>
+            <section class="mainframe" id="main">
+                {% block content %} {% endblock %}
+            </section>
+            
+            <div
+                class="card-make-event"
+                id="card-make-event"
+                style="display: none"
+            >
+            <h4>Tambah Event</h4>
+                <form method="post" action="/make-event">
+                    <i class="fa-solid fa-xmark close" onclick="addEvent()"></i>
+
+                    <div class="namapres">
+                        <p>nama presensi</p>
+                        <input
+                            type="text"
+                            name="nama_event"
+                            autocomplete="off"
+                            required
+                        />
+                    </div>
+
+                    <div class="ket">
+                        <p>keterangan</p>
+                        <textarea name="keterangan" required></textarea>
+                    </div>
+
+                    <div class="jadwal">
+                        <div class="mulai">
+                            <p>jadwal mulai</p>
+                            <input
+                                type="date"
+                                name="jadwal_mulai"
+                                autocomplete="off"
+                                required
+                            />
+                        </div>
+                        <div class="selesai">
+                            <p>jadwal selesai</p>
+                            <input
+                                type="date"
+                                name="jadwal_selesai"
+                                autocomplete="off"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="waktu">
+                        <div class="masuk">
+                            <p>waktu masuk</p>
+                            <input type="time" name="waktu_datang" required />
+                        </div>
+                        <div class="pulang">
+                            <p>waktu pulang</p>
+                            <input type="time" name="waktu_pulang" required />
+                        </div>
+                    </div>
+                    <div class="clr">
+                        <label for="color">Warna</label>
+                        <input type="color" name="color" id="color" />
+                    </div>
+
+                    <div class="sbmt">
+                        <button type="submit">Submit</button>
+                    </div>
+
+                </form>
+            </div>
+            
+        </main>
+        <script>
+            const aside = document.getElementById("sidePanel");
+            const labels = aside.querySelectorAll(".label");
+            const addEventWindow = document.getElementById("card-make-event");
+            const back = document.getElementById("back");
+            const popupAkun = document.getElementById("popupakun")
+            let popAkun = false;
+            let side = false;
+            let addEventCon = false;
+            function sidePanel() {
+                if (side) {
+                    aside.style.width = "20%";
+                    aside.style.alignItems = "start";
+                    labels.forEach((label) => {
+                        label.style.display = "block";
+                    });
+                    document.getElementById("main").style.width = "80%";
+                    side = false;
+                } else {
+                    aside.style.width = "5%";
+                    aside.style.alignItems = "center";
+                    labels.forEach((label) => {
+                        label.style.display = "none";
+                    });
+                    document.getElementById("main").style.width = "95%";
+                    side = true;
+                }
+            }
+            function addEvent() {
+                if (addEventCon) {
+                    addEventWindow.style.display = "none";
+                    back.style.display = "none";
+                    addEventCon = false;
+                } else {
+                    addEventWindow.style.display = "flex";
+                    back.style.display = "block";
+                    addEventCon = true;
+                }
+            }
+            function goToEvent(element) {
+                const eventId = element.getAttribute("data-event-id");
+                window.location.href = "/event/" + eventId;
+            }
+            function popUpAkun(){
+                if (popAkun){
+                    popupAkun.style.display = "none"
+                    popAkun = false
+                } else {
+                    popupAkun.style.display = "flex"
+                    popAkun = true
+                }
+            }
+        </script>
+    </body>
+</html>

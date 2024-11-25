@@ -1,0 +1,424 @@
+{% extends "base.html" %} {% block head %}
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="{{ url_for('static',filename='styles/event.css') }}"
+/>
+{% endblock %} {% block popUp %}
+<div class="popupsetting" style="display: none">
+    <h4>Setting</h4>
+    <i class="fa-solid fa-xmark close" onclick="showSetting()"></i>
+    <form method="post" action="/setting" class="atur">
+        <div class="namapres">
+            <p>nama presensi</p>
+            <input
+                type="text"
+                name="nama_event"
+                autocomplete="off"
+                value="{{ info[1] }}"
+                required
+            />
+        </div>
+
+        <div class="ket">
+            <p>keterangan</p>
+            <textarea name="keterangan" required>{{ info[2] }}</textarea>
+        </div>
+
+        <div class="jadwal">
+            <div class="mulai">
+                <p>jadwal mulai</p>
+                <input
+                    type="date"
+                    name="jadwal_mulai"
+                    autocomplete="off"
+                    value="{{info[3]}}"
+                    required
+                />
+            </div>
+            <div class="selesai">
+                <p>jadwal selesai</p>
+                <input
+                    type="date"
+                    name="jadwal_selesai"
+                    autocomplete="off"
+                    value="{{info[4]}}"
+                    required
+                />
+            </div>
+        </div>
+        <div class="waktu">
+            <div class="masuk">
+                <p>waktu masuk</p>
+                <input
+                    type="time"
+                    name="waktu_datang"
+                    value="{{info[5]}}"
+                    required
+                />
+            </div>
+            <div class="pulang">
+                <p>waktu pulang</p>
+                <input
+                    type="time"
+                    name="waktu_pulang"
+                    value="{{info[6]}}"
+                    required
+                />
+            </div>
+        </div>
+        <div class="clr">
+            <label for="color">Warna</label>
+            <input type="color" name="color" id="color" value="{{info[7]}}" />
+        </div>
+        <div class="sbmt">
+            <button type="submit">Simpan</button>
+        </div>
+    </form>
+</div>
+<div class="popupeditpeserta" style="display: none">
+    <h4>Edit Data Peserta</h4>
+    <i class="fa-solid fa-xmark close" onclick="showEditPeserta(this)"></i>
+    <form method="post" class="atur" id="editForm">
+        <label for="nama">Nama</label>
+        <input type="text" name="namaPeserta" id="namaPeserta">
+        <label for="email">Email</label>
+        <input type="email" name="emailPeserta" id="emailPeserta">
+        <div class="sbmt">
+            <button type="submit">Simpan</button>
+        </div>
+    </form>
+</div>
+{% endblock %} {% block content %}
+<header>
+    <div class="header" style="background-color: {{ info[7] }};">
+        <div class="info">
+            <h1>{{ info[1] }}</h1>
+            <p>{{ info[2] }}</p>
+        </div>
+
+        <div class="background1"></div>
+        <div class="background2"></div>
+        <a onclick="showSetting()"><i class="fa-solid fa-gear gear"></i></a>
+    </div>
+    <div class="event-nav">
+        <a href="/event/{{ info[0] }}/presensi" id="presensiMenu">Presensi</a>
+        <a href="/event/{{ info[0] }}/orang" id="orangMenu">Orang</a>
+        <a href="/event/{{ info[0] }}/data" id="dataMenu">Data</a>
+    </div>
+</header>
+<section id="presensi">
+    {%if dataset %}
+    <div class="top">
+        <div class="time">
+            <p id="clock"></p>
+            <p>{{ date }}</p>
+        </div>
+        <a href="/presensi/cek/0"
+            ><button class="presensiBTN">Presensi sekarang</button></a
+        >
+    </div>
+    <div class="table">
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Face Id</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in dataset %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{data[1]}}</td>
+                    <td>{{data[2]}}</td>
+                    {% if data[3] != 0 %}
+                    <td>
+                        <div class="terdaftar">
+                            <p class="text">Terdaftar</p>
+                        </div>
+                    </td>
+                    {% else %}
+                    <td>
+                        <div class="tambahFace">
+                            <button
+                                class="Btn tambah"
+                                onclick="window.location.href = '/presensi/tambah/{{data[0]}}'"
+                            >
+                                tambah
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Belum ada data</p>
+    <button onclick="showPopUp()">Import Data</button>
+    <div class="popup-import-data" id="popup-import-data">
+        <form action="/importdata" method="post" enctype="multipart/form-data">
+            <input
+                class="addfile"
+                type="file"
+                name="dataset"
+                required
+                accept=".csv"
+            />
+            <button class="save" type="submit">simpan</button>
+        </form>
+    </div>
+    {% endif %}
+</section>
+<section id="orang">
+    {%if dataset %}
+    <div class="top">
+        <button onclick="showPopUp()" class="importBTN">Import Data</button>
+        <button class="shareBTN" onclick="window.location.href = '/send-email'">Bagikan Undangan</button>
+    </div>
+    <div class="popup-import-data" id="popup-import-data">
+        <form action="/importdata" method="post" enctype="multipart/form-data">
+            <input
+                class="addfile"
+                type="file"
+                name="dataset"
+                required
+                accept=".csv"
+            />
+            <button class="save" type="submit">simpan</button>
+        </form>
+    </div>
+    <div class="table">
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(dataSetLength) %}
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{dataset[i][1]}}</td>
+                    <td>{{dataset[i][2]}}</td>
+                    <td>{{status[i]}}</td>
+                    <td>
+                        <div class="button">
+                            <button
+                                class="Btn edit"
+                                onclick="showEditPeserta(this)"
+                                id-peserta="{{ dataset[i][0] }}"
+                                num ="{{ i }}"
+                            >
+                                Edit
+                                <svg class="svg" viewBox="0 0 512 512">
+                                    <path
+                                        d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
+                                    ></path>
+                                </svg>
+                            </button>
+                            <button
+                                class="Btn hapus"
+                                onclick="hapusPeserta(this)"
+                                id-peserta="{{ dataset[i][0] }}"
+                            >
+                                Hapus
+                                <i class="fa-regular fa-trash-can sampah"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Belum ada data</p>
+    <button onclick="showPopUp()">Import Data</button>
+    <div class="popup-import-data" id="popup-import-data">
+        <form action="/importdata" method="post" enctype="multipart/form-data">
+            <input type="file" name="dataset" required />
+            <button type="submit">submit</button>
+        </form>
+    </div>
+    {% endif %}
+</section>
+<section id="data">
+    {%if dataset %}
+    <div class="top">
+        <div class="time">
+            <p>{{ date }}</p>
+        </div>
+        <button class="exportBTN" onclick="window.location.href = '/export'">
+            Export
+        </button>
+    </div>
+    <div class="table">
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Nama</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Waktu Masuk</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(dataSetLength) %}
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{dataset[i][1]}}</td>
+                    <td>{{dataset[i][2]}}</td>
+                    <td>{{status[i]}}</td>
+                    {% if dataset[i][4] == none %}
+                    <td>-</td>
+                    {% else %}
+                    <td>{{dataset[i][4]}}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>Belum ada data</p>
+    <button onclick="showPopUp()">Import Data</button>
+    <div class="popup-import-data" id="popup-import-data">
+        <form action="/importdata" method="post" enctype="multipart/form-data">
+            <input
+                class="addfile"
+                type="file"
+                name="dataset"
+                required
+                accept=".csv"
+            />
+            <button class="save" type="submit">simpan</button>
+        </form>
+    </div>
+    {% endif %}
+</section>
+{% with messages = get_flashed_messages() %} {% if messages %}
+<div class="flash-messages alert" id="alert">
+    {% for message in messages %}
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <p>{{ message }}</p>
+    <i
+        class="fa-solid fa-xmark close"
+        onclick="document.getElementById('alert').style.display='none'"
+    ></i>
+    {% endfor %}
+</div>
+{% endif %} {% endwith %}
+
+<script>
+    const presensiSection = document.getElementById("presensi");
+    const orangSection = document.getElementById("orang");
+    const dataSection = document.getElementById("data");
+    const presensiMenu = document.getElementById("presensiMenu");
+    const orangMenu = document.getElementById("orangMenu");
+    const dataMenu = document.getElementById("dataMenu");
+    const popupImportData = document.getElementById("popup-import-data");
+    const popupsetting = document.querySelector(".popupsetting");
+    const popupeditpeserta = document.querySelector(".popupeditpeserta");
+    let popupImportDataCon = false;
+    let setting = false;
+    let editPeserta = false;
+
+    function showSection(section) {
+        if (section === "presensi") {
+            presensiSection.style.display = "flex";
+            orangSection.style.display = "none";
+            dataSection.style.display = "none";
+            presensiMenu.style.textDecoration = "underline";
+            orangMenu.style.textDecoration = "none";
+            dataMenu.style.textDecoration = "none";
+        } else if (section === "orang") {
+            presensiSection.style.display = "none";
+            orangSection.style.display = "flex";
+            dataSection.style.display = "none";
+            presensiMenu.style.textDecoration = "none";
+            orangMenu.style.textDecoration = "underline";
+            dataMenu.style.textDecoration = "none";
+        } else if (section === "data") {
+            presensiSection.style.display = "none";
+            orangSection.style.display = "none";
+            dataSection.style.display = "flex";
+            presensiMenu.style.textDecoration = "none";
+            orangMenu.style.textDecoration = "none";
+            dataMenu.style.textDecoration = "underline";
+        } else {
+            presensiSection.style.display = "flex";
+            orangSection.style.display = "none";
+            dataSection.style.display = "none";
+            presensiMenu.style.textDecoration = "underline";
+            orangMenu.style.textDecoration = "none";
+            dataMenu.style.textDecoration = "none";
+        }
+    }
+    function showPopUp() {
+        if (!popupImportDataCon) {
+            popupImportData.style.display = "flex";
+            popupImportDataCon = true;
+        } else {
+            popupImportData.style.display = "none";
+            popupImportDataCon = false;
+        }
+    }
+    function showSetting() {
+        if (setting) {
+            popupsetting.style.display = "none";
+            back.style.display = "none";
+            setting = false;
+        } else {
+            popupsetting.style.display = "flex";
+            back.style.display = "block";
+            setting = true;
+        }
+    }
+        function showEditPeserta(element) {
+            if (editPeserta) {
+                popupeditpeserta.style.display = "none";
+                back.style.display = "none";
+                editPeserta = false;
+            } else {
+                let id = element.getAttribute("id-peserta");
+                popupeditpeserta.style.display = "flex";
+                document.getElementById("editForm").action = "/editpeserta/" + id
+                back.style.display = "block";
+                editPeserta = true;
+            }
+        }
+
+    function updateClock() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, "0");
+        const minutes = now.getMinutes().toString().padStart(2, "0");
+
+        const timeString = `${hours}:${minutes}`;
+        document.getElementById("clock").textContent = timeString;
+    }
+
+    // Update the clock every second
+    setInterval(updateClock, 1000);
+
+    // Initial call to display the clock immediately
+    updateClock();
+
+    showSection("{{ section }}");
+
+    function hapusPeserta(element) {
+        const idPeserta = element.getAttribute("id-peserta");
+        window.location.href = "/hapus/" + idPeserta;
+    }
+</script>
+{% endblock %}

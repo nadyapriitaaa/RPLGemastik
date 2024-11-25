@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static',filename='styles/style.css') }}"
+        />
+        <title>Napritsent</title>
+        <style>
+            .about {
+                display: flex;
+            }
+            .clip {
+                clip-path: polygon(16% 11%, 100% 33%, 98% 99%, 0% 100%);
+            }
+            .clip1 {
+                clip-path: polygon(3% 33%, 87% 12%, 100% 100%, 0 100%);
+            }
+            .clip2 {
+                clip-path: polygon(0 13%, 94% 38%, 100% 100%, 14% 100%);
+                margin-left: -20px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/login" class="login">Login</a></li>
+                <li><a href="/register" class="regis">Sign Up</a></li>
+            </ul>
+        </nav>
+        <main>
+            <h1>Manage Your Custom <span>Data</span></h1>
+            <a class="start" href="/login">Start Now</a>
+            <div class="about">
+                <img
+                    class="clip"
+                    src="../static/faces/49_ya/16.jpg"
+                    alt="naprit"
+                />
+                <img
+                    class="clip1"
+                    src="../static/faces/49_ya/26.jpg"
+                    alt="naprit"
+                />
+                <img
+                    class="clip2"
+                    src="../static/faces/49_ya/48.jpg"
+                    alt="naprit"
+                />
+            </div>
+        </main>
+    </body>
+</html>

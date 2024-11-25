@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    {% if event %} {% for i in event %}
+    <div
+        class="card"
+        id="card"
+        onclick="goToEvent(this)"
+        data-event-id="{{ i[0] }}"
+        style="background-color: {{ i[7] }};"
+    >
+        <div class="cover">
+            <h1 class="eventName">{{ i[1] }}</h1>
+            <p class="waktu">{{ i[2] }}</p>
+        </div>
+        <div class="icon">
+            <a href="/event/{{ i[0] }}/orang"
+                ><i class="fa-solid fa-user-group"></i
+            ></a>
+            <a href="/event/{{ i[0] }}/data"
+                ><i class="fa-solid fa-database"></i
+            ></a>
+            <a href="/event/{{ i[0] }}"
+                ><i class="fa-solid fa-gear"></i
+            ></a>
+        </div>
+        <div class="background1"></div>
+        <div class="background2"></div>
+    </div>
+    {% endfor %} {% else %}
+    <p>Belum ada event</p>
+    {% endif %}
+</div>
+{% endblock %}
