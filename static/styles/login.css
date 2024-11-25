@@ -1,0 +1,142 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.left-side {
+    background-image: url(img/bg-login.svg);
+    height: 100vh;
+    width: 40%;
+}
+
+.left-side p {
+    font-size: 3rem;
+    margin: 5rem 0 0 3rem;
+    color: #fff;
+}
+
+.right-side {
+    width: 60%;
+    height: 100vh;
+    box-shadow: 0px 0px 100px 39px #0000002e;
+    z-index: 100;
+}
+
+.right-side p {
+    font-size: 5.5rem;
+    margin-left: 5rem;
+}
+.right-side p span {
+    font-weight: 600;
+}
+
+.right-side p:nth-child(1) {
+    margin-top: 7rem;
+}
+.right-side p.tanya {
+    font-size: 1rem;
+    margin: 10px 0 0 0;
+}
+.right-side a {
+    text-decoration: underline;
+    color: #0093c2;
+    cursor: pointer;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    padding-left: 5rem;
+}
+
+form .input-field {
+    position: relative;
+    width: 20rem;
+    height: 3rem;
+    margin-top: 20px;
+}
+
+form .input-field input {
+    height: 100%;
+    width: 100%;
+    border-radius: 15px;
+    padding: 20px;
+}
+form .input-field label {
+    position: absolute;
+    width: 6rem;
+    text-align: center;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    color: #717171;
+    cursor: text;
+}
+form button {
+    margin-top: 10px;
+    width: 150px;
+    height: 30px;
+    border-radius: 40px;
+    color: #fff;
+    background: #000;
+}
+.input-field input:is(:focus, :valid) ~ label {
+    transform: translateY(-150%);
+    background-color: #fff;
+    color: #000;
+    transition: all ease-in-out 100ms;
+}
+
+.alert {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: #ef665b;
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px -3px #111;
+    gap: 20px;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    z-index: 100;
+    animation-name: error;
+    animation-duration: 1s;
+    transition: all 1s ease;
+}
+.alert i {
+    width: 20px;
+    height: 20px;
+    transform: translateY(-2px);
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.alert p{
+    color: #fff;
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.close {
+    cursor: pointer;
+}
+
+@keyframes error {
+    from {top: -20px;}
+    to {top: 10px;}
+}
